@@ -61,7 +61,6 @@ const techList = ref([
     ]
 )
 </script>
-
 <template>
   <div class="flex justify-between my-4">
     <h1 class=" uppercase text-4xl  font-bold ">Cập nhật project</h1>
