@@ -1,12 +1,7 @@
 <script setup lang="ts">
-import FooterVue from '@/components/client/Footer.vue';
-import HeaderVue from '@/components/client/Header.vue';
 </script>
-
 <template>
-	<div>
-		<HeaderVue />
-		<RouterView />
-		<FooterVue />
-	</div>
+  <div class="max-w-7xl mx-auto">
+    <RouterView/>
+  </div>
 </template>
