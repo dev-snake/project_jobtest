@@ -1,69 +1,94 @@
 <script setup lang="ts">
-import {useRouter} from "vue-router";
-import adminRoutes from "@/config/admin_routes.config";
-
-const router = useRouter()
+import { useRouter } from 'vue-router';
+import adminRoutes from '@/config/admin_routes.config';
+import { onMounted, ref, watch } from 'vue';
+import axios from 'axios';
+import apiRoutes from '@/config/api_routes.config';
+import type { API_Response } from '@/types/API_Response';
+import type { IProject } from '@/types/project';
+import { formatDate } from '@/utils/formatDate';
+import Loading from '@/components/common/Loading.vue';
+const router = useRouter();
+const loading = ref<boolean>(true);
+const projectsList = ref<IProject[]>([]);
+const handleDeleteProject = async (projectId: string) => {
+	try {
+		const res = await axios.delete<API_Response<IProject>>(apiRoutes.project.delete(projectId));
+		if (res.data.status === 'success') {
+			projectsList.value = projectsList.value.filter((project) => project.id !== projectId);
+		}
+	} catch (err) {
+		console.log(err);
+	}
+};
+const fetchData = async () => {
+	loading.value = true;
+	try {
+		const res = await axios.get<API_Response<IProject[]>>(apiRoutes.project.getAll);
+		if (res.data.status === 'success') {
+			projectsList.value = res.data.results;
+		}
+	} catch (error) {
+		console.log(error);
+	} finally {
+		loading.value = false;
+	}
+};
+onMounted(() => {
+	fetchData();
+});
+watch(loading, () => {
+	console.log('re render');
+});
 </script>
 <template>
-  <div>
-    <div class="flex justify-between my-4">
-      <h1 class=" uppercase text-4xl  font-bold ">quản lí projects</h1>
-      <button class="p-2 bg-blue-500 text-white text-sm rounded-xl"
-              @click="router.push({path : adminRoutes.project.create})"
-      >Thêm dự án mới
-      </button>
-    </div>
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-      <table class="w-full text-sm text-left rtl:text-right ">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-        <tr>
-          <th scope="col" class="px-6 py-3">
-            Tên dự án
-          </th>
-          <th scope="col" class="px-6 py-3">
-            Thời gian bắt đầu
-          </th>
-          <th scope="col" class="px-6 py-3">
-            Thời gian kết thúc
-          </th>
-          <th scope="col" class="px-6 py-3">
-            Price
-          </th>
-          <th scope="col" class="px-6 py-3">
-            hành động
-          </th>
-        </tr>
-        </thead>
-        <tbody>
-
-        <tr>
-          <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-            Apple Watch 5
-          </th>
-          <td class="px-6 py-4">
-            Red
-          </td>
-          <td class="px-6 py-4">
-            Wearables
-          </td>
-          <td class="px-6 py-4">
-            $999
-          </td>
-          <td class="px-6 py-4 flex gap-x-2">
-            <button class="p-2  rounded-xl bg-red-400 text-white"
-            >Xóa
-            </button>
-            <button class="p-2  rounded-xl bg-yellow-300 text-white"
-                    @click="router.push({path : adminRoutes.project.edit('1')})"
-            >Sửa
-            </button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-
-  </div>
+	<div>
+		<div class="flex justify-between my-4">
+			<h1 class="uppercase text-4xl font-bold">quản lí dự án</h1>
+			<button
+				class="p-2 bg-blue-500 text-white text-sm rounded-xl"
+				@click="router.push({ path: adminRoutes.project.create })"
+			>
+				Thêm dự án mới
+			</button>
+		</div>
+		<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+			<Loading msg="Đang tải dữ liệu" v-show="loading" />
+			<table class="w-full text-sm text-left rtl:text-right">
+				<thead class="text-xs text-gray-700 uppercase bg-gray-50">
+					<tr>
+						<th scope="col" class="px-6 py-3">Tên dự án</th>
+						<th scope="col" class="px-6 py-3">Thời gian bắt đầu</th>
+						<th scope="col" class="px-6 py-3">Thời gian kết thúc</th>
+						<th scope="col" class="px-6 py-3">Mô tả</th>
+						<th scope="col" class="px-6 py-3">hành động</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="(project, index) in projectsList" :key="index">
+						<td class="px-6 py-4" v-text="project.projectName"></td>
+						<td class="px-6 py-4" v-text="formatDate(project.startTime)"></td>
+						<td class="px-6 py-4" v-text="formatDate(project.endTime)"></td>
+						<td class="px-6 py-4" v-text="project.projectDescription"></td>
+						<td class="px-6 py-4 flex gap-x-2">
+							<button
+								class="p-2 rounded-xl bg-red-400 text-white"
+								@click="handleDeleteProject(project.id)"
+							>
+								Xóa
+							</button>
+							<button
+								class="p-2 rounded-xl bg-yellow-300 text-white"
+								@click="router.push({ path: adminRoutes.project.edit(project.id) })"
+							>
+								Sửa
+							</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
 </template>
 
 <style scoped></style>

@@ -5,7 +5,7 @@ import Dashboard from '@/views/admin/Dashboard.vue';
 </script>
 
 <template>
-	<HeaderAdmin />
+	<HeaderAdmin title="Admin" />
 	<Dashboard />
 	<RouterView />
 </template>

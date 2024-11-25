@@ -1,108 +1,134 @@
 <script setup lang="ts">
-import {useRouter} from "vue-router";
-import adminRoutes from "@/config/admin_routes.config";
-import {ref} from "vue";
+import { useRouter } from 'vue-router';
+import adminRoutes from '@/config/admin_routes.config';
+import { ref, reactive, watch } from 'vue';
+import type { IProject } from '@/types/project';
+import axios from 'axios';
+import apiRoutes from '@/config/api_routes.config';
+import type { API_Response } from '@/types/API_Response';
 
-const router = useRouter()
-const techList = ref([
-      {
-        id: 1,
-        name: 'Javascript',
-      },
-      {
-        id: 3,
-        name: 'Typescript',
-      },
-      {
-        id: 2,
-        name: 'Node.js',
-      },
-      {
-        id: 4,
-        name: 'PHP',
-      },
-      {
-        id: 5,
-        name: 'HTML5',
-      },
-      {
-        id: 6,
-        name: 'CSS',
-      },
-      {
-        id: 7,
-        name: 'ReactJS',
-      },
-      {
-        id: 8,
-        name: 'Next.js',
-      },
-      {
-        id: 9,
-        name: 'TailwindCss',
-      },
-      {
-        id: 10,
-        name: 'AngularJS',
-      },
-      {
-        id: 11,
-        name: 'MongoDB',
-      },
-      {
-        id: 12,
-        name: 'Express',
-      },
-      {
-        id: 13,
-        name: 'MySQL',
+const router = useRouter();
 
-      }
-    ]
-)
+const inputValue = ref();
+const newProject = reactive({
+	projectName: '',
+	listOfTechUsed: [] as string[],
+	startTime: '',
+	endTime: '',
+	projectDescription: ''
+});
+const handleAddTech = () => {
+	if (!inputValue.value) return;
+	if (newProject.listOfTechUsed.includes(inputValue.value)) {
+		return console.log('Da ton tai trong tech list');
+	}
+	newProject.listOfTechUsed.push(inputValue.value);
+	inputValue.value = '';
+};
+
+const handleCreateNewProject = async (e: Event) => {
+	e.preventDefault();
+	try {
+		const res = await axios.post<API_Response<IProject>>(apiRoutes.project.create, newProject);
+		if (res.data.status === 'success') {
+			console.log(res.data.message);
+			router.push({ path: adminRoutes.project.root });
+		}
+	} catch (error) {
+		console.log(error);
+	}
+};
+const handleRemoveTech = (projectItem: string) => {
+	newProject.listOfTechUsed = newProject.listOfTechUsed.filter((item) => item !== projectItem);
+};
+watch(newProject, () => {
+	console.log(newProject);
+});
 </script>
 
 <template>
-  <div class="flex justify-between my-4">
-    <h1 class=" uppercase text-4xl  font-bold ">thêm project</h1>
-    <button class="p-2 bg-blue-500 text-white text-sm rounded-xl"
-            @click="router.push({path :adminRoutes.project.root })"
-    >Quay lại
-    </button>
-  </div>
-  <div>
-    <div class="flex flex-col gap-y-2">
-      <div class="flex flex-col gap-y-2">
-        <label for="">Tên dự án</label>
-        <input class="border p-2 rounded-lg" placeholder="Nhập tên dự án"/>
-      </div>
-      <div class="flex gap-x-4 w-full">
-        <div class="w-full">
-          <label for="" class="block">Thời gian bat dau </label>
-          <input type="datetime-local" class="border p-2 rounded-lg w-full" name="" id="">
-        </div>
-        <div class="w-full">
-          <label for="" class="block">Thời gian kết thúc </label>
-          <input type="datetime-local" class="border p-2 rounded-lg w-full" name="" id="">
-        </div>
+	<div class="flex justify-between my-4">
+		<h1 class="uppercase text-4xl font-bold">thêm project</h1>
+		<button
+			class="p-2 bg-blue-500 text-white text-sm rounded-xl"
+			@click="router.push({ path: adminRoutes.project.root })"
+		>
+			Quay lại
+		</button>
+	</div>
+	<div>
+		<form class="flex flex-col gap-y-2" enctype="multipart/form-data">
+			<div class="flex flex-col gap-y-2">
+				<label for="">Tên dự án</label>
+				<input
+					class="border p-2 rounded-lg"
+					placeholder="Nhập tên dự án"
+					v-model="newProject.projectName"
+				/>
+			</div>
+			<div class="flex gap-x-4 w-full">
+				<div class="w-full">
+					<label for="" class="block">Thời gian bat dau </label>
+					<input
+						type="datetime-local"
+						class="border p-2 rounded-lg w-full"
+						name=""
+						id=""
+						v-model="newProject.startTime"
+					/>
+				</div>
+				<div class="w-full">
+					<label for="" class="block">Thời gian kết thúc </label>
+					<input
+						type="datetime-local"
+						class="border p-2 rounded-lg w-full"
+						name=""
+						id=""
+						v-model="newProject.endTime"
+					/>
+				</div>
+			</div>
+			<div class="w-full flex flex-col gap-y-2">
+				<label for="" class="block">Nhập mô tả </label>
+				<textarea class="border rounded-lg py-2" v-model="newProject.projectDescription">
+				</textarea>
+			</div>
 
-      </div>
-      <div class="w-full flex flex-col gap-y-2">
-        <label for="" class="block">Nhập mô tả </label>
-        <textarea class="border rounded-lg py-2">
-        </textarea>
-      </div>
-      <div class="w-full flex flex-col gap-y-2">
-        <label for="" class="block">Chọn công nghệ :</label>
-        <div class="flex gap-x-4 ">
-          <button v-text="tech.name" v-for="tech in techList" :key="tech.id" class="border p-2"></button>
-        </div>
-      </div>
-    </div>
-    <button class="w-full py-2 bg-blue-500 mt-4 text-white rounded-lg">Thêm project mới</button>
-  </div>
+			<div class="w-full flex flex-col gap-y-2">
+				<label for="" class="block">Chọn công nghệ :</label>
+				<div class="">
+					<div
+						class="border py-2 mr-2 px-8 inline-block rounded-sm hover:cursor-pointer uppercase"
+						v-for="(project, index) in newProject.listOfTechUsed"
+						@click="handleRemoveTech(project)"
+						:key="index"
+						v-text="project"
+					></div>
+				</div>
+				<div class="flex gap-x-4">
+					<input
+						placeholder="Nhập tên công nghệ"
+						v-model="inputValue"
+						class="p-2 border"
+					/>
+					<button
+						class="p-2 border bg-blue-500 text-white"
+						type="button"
+						@click="handleAddTech"
+					>
+						Thêm công nghệ
+					</button>
+				</div>
+			</div>
+			<button
+				class="w-full py-2 bg-blue-500 mt-4 text-white rounded-lg"
+				type="submit"
+				@click="handleCreateNewProject"
+			>
+				Thêm project mới
+			</button>
+		</form>
+	</div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
