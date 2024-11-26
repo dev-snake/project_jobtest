@@ -3,9 +3,10 @@ import { useRouter } from 'vue-router';
 import adminRoutes from '@/config/admin_routes.config';
 import { ref, reactive, watch } from 'vue';
 import type { IProject } from '@/types/project';
-import axios from 'axios';
+import axiosConfig from '@/config/axios.config';
 import apiRoutes from '@/config/api_routes.config';
 import type { API_Response } from '@/types/API_Response';
+import { toast } from 'vue3-toastify';
 
 const router = useRouter();
 
@@ -20,7 +21,7 @@ const newProject = reactive({
 const handleAddTech = () => {
 	if (!inputValue.value) return;
 	if (newProject.listOfTechUsed.includes(inputValue.value)) {
-		return console.log('Da ton tai trong tech list');
+		return toast.error('Đã tồn tại trong danh sách');
 	}
 	newProject.listOfTechUsed.push(inputValue.value);
 	inputValue.value = '';
@@ -29,9 +30,12 @@ const handleAddTech = () => {
 const handleCreateNewProject = async (e: Event) => {
 	e.preventDefault();
 	try {
-		const res = await axios.post<API_Response<IProject>>(apiRoutes.project.create, newProject);
+		const res = await axiosConfig.post<API_Response<IProject>>(
+			apiRoutes.project.create,
+			newProject
+		);
 		if (res.data.status === 'success') {
-			console.log(res.data.message);
+			toast.success('Thêm Thành công !');
 			router.push({ path: adminRoutes.project.root });
 		}
 	} catch (error) {

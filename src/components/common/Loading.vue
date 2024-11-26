@@ -1,6 +1,6 @@
 <script setup lang="ts">
-const { msg } = defineProps({
-	msg: String
+const { label } = defineProps({
+	label: String
 });
 </script>
 <template>
@@ -8,7 +8,7 @@ const { msg } = defineProps({
 		<div
 			class="size-6 border-l-4 border-r-4 border-r-red-500 border-l-yellow-300 shadow-sm rounded-full animate-spin"
 		></div>
-		<span class="italic font-light" v-text="msg + '...'"></span>
+		<span class="italic font-light" v-text="label + '...'"></span>
 	</div>
 </template>
 

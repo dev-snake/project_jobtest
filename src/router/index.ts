@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '@/views/client/HomeView.vue';
 import ClientLayout from '@/layouts/ClientLayout/ClientLayout.vue';
 import AdminLayout from '@/layouts/AdminLayout/AdminLayout.vue';
-import SignIn from '@/views/auth/SignIn.vue';
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,16 +15,7 @@ const router = createRouter({
 					name: '',
 					component: HomeView
 				},
-				{
-					path: '/about',
-					name: 'about',
-					component: () => import('@/views/client/AboutView.vue')
-				},
-				{
-					path: '/project/:projectId',
-					name: 'project',
-					component: () => import('@/views/client/ProjectDetail.vue')
-				},
+
 				{
 					path: 'sign-in',
 					name: 'sign-in',

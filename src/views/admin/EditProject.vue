@@ -6,10 +6,13 @@ import type { API_Response } from '@/types/API_Response';
 import type { IProject } from '@/types/project';
 import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import axios from 'axios';
+import axiosConfig from '@/config/axios.config';
 import apiRoutes from '@/config/api_routes.config';
+import Loading from '@/components/common/Loading.vue';
+import { toast } from 'vue3-toastify';
 const { params } = useRoute();
 const router = useRouter();
+const loading = ref<boolean>(true);
 let projectInfo = ref({
 	projectName: '',
 	listOfTechUsed: [] as string[],
@@ -28,21 +31,24 @@ const handleAddTech = () => {
 };
 const handleEditProject = async () => {
 	try {
-		const res = await axios.put<API_Response<IProject>>(
+		const res = await axiosConfig.put<API_Response<IProject>>(
 			apiRoutes.project.edit(params.projectId as string),
 			projectInfo.value
 		);
 		if (res.data.status === 'success') {
 			router.push({ path: adminRoutes.project.root });
+			toast.success('Cập nhật thành công');
 		}
 	} catch (error) {
 		console.log(error);
 	}
 };
 onMounted(() => {
+	loading.value = true;
 	const fetchData = async () => {
+		loading.value = true;
 		try {
-			const res = await axios.get<API_Response<IProject>>(
+			const res = await axiosConfig.get<API_Response<IProject>>(
 				apiRoutes.project.getOne(params.projectId as string)
 			);
 			if (res.data.status === 'success') {
@@ -56,6 +62,8 @@ onMounted(() => {
 			}
 		} catch (error) {
 			console.log(error);
+		} finally {
+			loading.value = false;
 		}
 	};
 	fetchData();
@@ -84,6 +92,7 @@ watch(
 		</button>
 	</div>
 	<div>
+		<Loading v-show="loading" label="Đang tải dữ liệu" />
 		<div class="flex flex-col gap-y-2">
 			<div class="flex flex-col gap-y-2">
 				<label for="">Tên dự án</label>

@@ -8,14 +8,19 @@ import type { API_Response } from '@/types/API_Response';
 import type { IProject } from '@/types/project';
 import { formatDate } from '@/utils/formatDate';
 import Loading from '@/components/common/Loading.vue';
+import axiosConfig from '@/config/axios.config';
+import { toast } from 'vue3-toastify';
 const router = useRouter();
 const loading = ref<boolean>(true);
 const projectsList = ref<IProject[]>([]);
 const handleDeleteProject = async (projectId: string) => {
 	try {
-		const res = await axios.delete<API_Response<IProject>>(apiRoutes.project.delete(projectId));
+		const res = await axiosConfig.delete<API_Response<IProject>>(
+			apiRoutes.project.delete(projectId)
+		);
 		if (res.data.status === 'success') {
 			projectsList.value = projectsList.value.filter((project) => project.id !== projectId);
+			toast.success('Xóa Thành công');
 		}
 	} catch (err) {
 		console.log(err);
@@ -24,9 +29,11 @@ const handleDeleteProject = async (projectId: string) => {
 const fetchData = async () => {
 	loading.value = true;
 	try {
-		const res = await axios.get<API_Response<IProject[]>>(apiRoutes.project.getAll);
+		const res = await axiosConfig.get<API_Response<IProject[]>>(apiRoutes.project.getAll);
 		if (res.data.status === 'success') {
 			projectsList.value = res.data.results;
+		} else {
+			console.log(res);
 		}
 	} catch (error) {
 		console.log(error);
@@ -53,7 +60,7 @@ watch(loading, () => {
 			</button>
 		</div>
 		<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-			<Loading msg="Đang tải dữ liệu" v-show="loading" />
+			<Loading label="Đang tải dữ liệu" v-show="loading" />
 			<table class="w-full text-sm text-left rtl:text-right">
 				<thead class="text-xs text-gray-700 uppercase bg-gray-50">
 					<tr>
