@@ -129,7 +129,7 @@ watch(
 				<label for="" class="block">Chọn công nghệ :</label>
 				<div class="">
 					<div
-						class="border py-2 mr-2 px-8 inline-block rounded-sm hover:cursor-pointer"
+						class="border py-2 mr-2 px-8 inline-block uppercase rounded-sm hover:cursor-pointer"
 						v-for="(project, index) in projectInfo.listOfTechUsed"
 						@click="handleRemoveTech(project)"
 						:key="index"

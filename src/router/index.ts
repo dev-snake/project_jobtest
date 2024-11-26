@@ -2,7 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '@/views/client/HomeView.vue';
 import ClientLayout from '@/layouts/ClientLayout/ClientLayout.vue';
 import AdminLayout from '@/layouts/AdminLayout/AdminLayout.vue';
-
+import { ref } from 'vue';
+import adminRoutes from '@/config/admin_routes.config';
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
 	routes: [
@@ -34,7 +35,7 @@ const router = createRouter({
 			children: [
 				{
 					path: '',
-					name: '',
+					name: 'admin',
 					component: () => import('@/views/admin/ProjectManagement.vue')
 				},
 				{
@@ -56,5 +57,14 @@ const router = createRouter({
 		}
 	]
 });
-
+const getAccessToken = ref(localStorage.getItem('accessToken'));
+console.log(getAccessToken.value, 'oke');
+router.beforeEach((to, from, next) => {
+	console.log('to name', to.name);
+	console.log(getAccessToken.value, 'accessToken');
+	console.log('is ', getAccessToken.value === null);
+	if (to.name === 'admin' && getAccessToken.value === null) {
+		next({ path: '/sign-in' });
+	} else next();
+});
 export default router;

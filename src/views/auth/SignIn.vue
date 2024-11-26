@@ -24,8 +24,8 @@ const handleLogin = async () => {
 		if (res.data.status === 'success') {
 			toast.success('Đăng nhập thành công');
 			// console.log(res.data.data.accessToken);
-			localStorage.setItem('accessToken', res.data.data.accessToken);
 			router.push({ path: adminRoutes.home });
+			localStorage.setItem('accessToken', res.data.data.accessToken);
 		} else {
 			toast.error('Đăng nhập thất bại');
 		}
