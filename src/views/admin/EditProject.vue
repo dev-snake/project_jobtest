@@ -133,7 +133,7 @@ watch(
 						v-for="(tech, index) in projectInfo.listOfTechUsed"
 						@click="handleRemoveTech(tech)"
 						:key="index"
-						v-text="project"
+						v-text="tech"
 					></div>
 				</div>
 				<div class="flex gap-x-4">
