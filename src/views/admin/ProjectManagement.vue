@@ -13,6 +13,9 @@ import { toast } from 'vue3-toastify';
 const router = useRouter();
 const loading = ref<boolean>(true);
 const projectsList = ref<IProject[]>([]);
+const projectsListCopy = ref<IProject[]>([]);
+const inputSearch = ref('');
+const checkSearch = ref(false);
 const handleDeleteProject = async (projectId: string) => {
 	try {
 		const res = await axiosConfig.delete<API_Response<IProject>>(
@@ -32,6 +35,7 @@ const fetchData = async () => {
 		const res = await axiosConfig.get<API_Response<IProject[]>>(apiRoutes.project.getAll);
 		if (res.data.status === 'success') {
 			projectsList.value = res.data.results;
+			projectsListCopy.value = res.data.results;
 		} else {
 			console.log(res);
 		}
@@ -41,6 +45,20 @@ const fetchData = async () => {
 		loading.value = false;
 	}
 };
+const resetSearch = () => {
+	checkSearch.value = false;
+	projectsList.value = projectsListCopy.value;
+};
+const handleSearchProject = () => {
+	console.log(inputSearch.value);
+	const filtered = projectsList.value.filter(
+		(project) => project.projectName === inputSearch.value.trim()
+	);
+
+	projectsList.value = filtered;
+	checkSearch.value = true;
+	inputSearch.value = '';
+};
 onMounted(() => {
 	fetchData();
 });
@@ -49,12 +67,28 @@ onMounted(() => {
 	<div>
 		<div class="flex justify-between my-4">
 			<h1 class="uppercase text-4xl font-bold">quản lí dự án</h1>
-			<button
-				class="p-2 bg-blue-500 text-white text-sm rounded-xl"
-				@click="router.push({ path: adminRoutes.project.create })"
-			>
-				Thêm dự án mới
-			</button>
+			<div>
+				<input type="text" class="p-1 border rounded-md mr-2" v-model="inputSearch" />
+				<button
+					class="p-2 bg-blue-400 text-white text-sm rounded-xl mr-2"
+					@click="handleSearchProject"
+				>
+					Tìm kiếm
+				</button>
+				<button
+					class="p-2 bg-blue-400 text-white text-sm rounded-xl mr-2"
+					v-show="checkSearch"
+					@click="resetSearch"
+				>
+					Làm mới
+				</button>
+				<button
+					class="p-2 bg-blue-500 text-white text-sm rounded-xl"
+					@click="router.push({ path: adminRoutes.project.create })"
+				>
+					Thêm dự án mới
+				</button>
+			</div>
 		</div>
 
 		<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
