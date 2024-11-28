@@ -44,9 +44,6 @@ const fetchData = async () => {
 onMounted(() => {
 	fetchData();
 });
-watch(loading, () => {
-	console.log('re render');
-});
 </script>
 <template>
 	<div>
@@ -59,6 +56,7 @@ watch(loading, () => {
 				Thêm dự án mới
 			</button>
 		</div>
+
 		<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
 			<Loading label="Đang tải dữ liệu" v-show="loading" />
 			<table class="w-full text-sm text-left rtl:text-right">

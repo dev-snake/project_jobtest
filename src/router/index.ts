@@ -16,7 +16,10 @@ const router = createRouter({
 					name: '',
 					component: HomeView
 				},
-
+				{
+					path: '/project/:projectId',
+					component: () => import('@/views/client/ProjectDetail.vue')
+				},
 				{
 					path: 'sign-in',
 					name: 'sign-in',
@@ -35,7 +38,7 @@ const router = createRouter({
 			children: [
 				{
 					path: '',
-					name: 'admin',
+					name: 'admin-project',
 					component: () => import('@/views/admin/ProjectManagement.vue')
 				},
 				{
@@ -57,14 +60,12 @@ const router = createRouter({
 		}
 	]
 });
-const getAccessToken = ref(localStorage.getItem('accessToken'));
-console.log(getAccessToken.value, 'oke');
 router.beforeEach((to, from, next) => {
-	console.log('to name', to.name);
-	console.log(getAccessToken.value, 'accessToken');
-	console.log('is ', getAccessToken.value === null);
-	if (to.name === 'admin' && getAccessToken.value === null) {
+	const getAccessToken = ref(localStorage.getItem('accessToken'));
+	if (to.name === 'admin-project' && getAccessToken.value === null) {
 		next({ path: '/sign-in' });
+	} else if ((getAccessToken.value && to.name === 'sign-in') || to.name === 'sign-up') {
+		next({ path: '/admin' });
 	} else next();
 });
 export default router;

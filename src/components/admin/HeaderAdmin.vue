@@ -2,7 +2,6 @@
 const { title } = defineProps({
 	title: String
 });
-console.log('Props', title);
 </script>
 
 <template>

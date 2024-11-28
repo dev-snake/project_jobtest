@@ -20,7 +20,7 @@ const newProject = reactive({
 });
 const handleAddTech = () => {
 	if (!inputValue.value) return;
-	if (newProject.listOfTechUsed.includes(inputValue.value)) {
+	if (newProject.listOfTechUsed.includes(inputValue.value.toLowerCase())) {
 		return toast.error('Đã tồn tại trong danh sách');
 	}
 	newProject.listOfTechUsed.push(inputValue.value);

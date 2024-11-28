@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router';
 import adminRoutes from '@/config/admin_routes.config';
 import type { API_Response } from '@/types/API_Response';
 import type { IProject } from '@/types/project';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch, reactive } from 'vue';
 import { useRoute } from 'vue-router';
 import axiosConfig from '@/config/axios.config';
 import apiRoutes from '@/config/api_routes.config';
@@ -23,8 +23,8 @@ let projectInfo = ref({
 const inputValue = ref();
 const handleAddTech = () => {
 	if (!inputValue.value) return;
-	if (projectInfo.value.listOfTechUsed.includes(inputValue.value)) {
-		return console.log('Da ton tai trong tech list');
+	if (projectInfo.value.listOfTechUsed.includes(inputValue.value.toLowerCase())) {
+		return toast.error('Đã tồn tại trong danh sách');
 	}
 	projectInfo.value.listOfTechUsed.push(inputValue.value);
 	inputValue.value = '';
