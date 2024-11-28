@@ -68,9 +68,9 @@ onMounted(() => {
 	};
 	fetchData();
 });
-const handleRemoveTech = (projectItem: string) => {
+const handleRemoveTech = (techName: string) => {
 	projectInfo.value.listOfTechUsed = projectInfo.value.listOfTechUsed.filter(
-		(item) => item !== projectItem
+		(item) => item !== techName
 	);
 };
 watch(
@@ -130,10 +130,10 @@ watch(
 				<div class="">
 					<div
 						class="border py-2 mr-2 px-8 inline-block uppercase rounded-sm hover:cursor-pointer"
-						v-for="(project, index) in projectInfo.listOfTechUsed"
-						@click="handleRemoveTech(project)"
+						v-for="(tech, index) in projectInfo.listOfTechUsed"
+						@click="handleRemoveTech(tech)"
 						:key="index"
-						v-text="project"
+						v-text="tech"
 					></div>
 				</div>
 				<div class="flex gap-x-4">
