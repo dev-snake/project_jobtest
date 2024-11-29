@@ -30,6 +30,17 @@ const handleAddTech = () => {
 	inputValue.value = '';
 };
 const handleEditProject = async () => {
+	// if (
+	// 	[
+	// 		projectInfo.projectName,
+	// 		projectInfo.listOfTechUsed,
+	// 		projectInfo.startTime,
+	// 		projectInfo.endTime,
+	// 		projectInfo.projectDescription
+	// 	].includes('')
+	// ) {
+	// 	return;
+	// }
 	try {
 		const res = await axiosConfig.put<API_Response<IProject>>(
 			apiRoutes.project.edit(params.projectId as string),

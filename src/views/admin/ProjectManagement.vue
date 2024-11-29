@@ -51,8 +51,8 @@ const resetSearch = () => {
 };
 const handleSearchProject = () => {
 	console.log(inputSearch.value);
-	const filtered = projectsList.value.filter(
-		(project) => project.projectName === inputSearch.value.trim()
+	const filtered = projectsList.value.filter((project) =>
+		project.projectName.toLowerCase().includes(inputSearch.value.toLowerCase().trim())
 	);
 
 	projectsList.value = filtered;
@@ -68,7 +68,12 @@ onMounted(() => {
 		<div class="flex justify-between my-4">
 			<h1 class="uppercase text-4xl font-bold">quản lí dự án</h1>
 			<div>
-				<input type="text" class="p-1 border rounded-md mr-2" v-model="inputSearch" />
+				<input
+					type="text"
+					class="p-1 border rounded-md mr-2"
+					v-model="inputSearch"
+					placeholder="Tìm kiếm theo tên"
+				/>
 				<button
 					class="p-2 bg-blue-400 text-white text-sm rounded-xl mr-2"
 					@click="handleSearchProject"

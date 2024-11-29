@@ -17,7 +17,7 @@ const newProject = reactive({
 	startTime: '',
 	endTime: '',
 	projectDescription: ''
-});
+} as IProject);
 const handleAddTech = () => {
 	if (!inputValue.value) return;
 	if (newProject.listOfTechUsed.includes(inputValue.value.toLowerCase())) {
@@ -29,6 +29,18 @@ const handleAddTech = () => {
 
 const handleCreateNewProject = async (e: Event) => {
 	e.preventDefault();
+	console.log(newProject.projectName);
+	if (
+		[
+			newProject.projectName,
+			newProject.startTime,
+			newProject.endTime,
+			newProject.projectDescription
+		].includes('')
+	) {
+		return toast.error('Vui lòng nhập đầy đủ');
+	}
+
 	try {
 		const res = await axiosConfig.post<API_Response<IProject>>(
 			apiRoutes.project.create,

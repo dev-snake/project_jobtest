@@ -88,7 +88,7 @@ onMounted(() => {
 	</div>
 
 	<Loading label="Đang tải dữ liệu " v-show="loading && accessToken" />
-	<div class="grid grid-cols-3 gap-x-2" v-show="accessToken">
+	<div class="grid grid-cols-3 gap-2" v-show="accessToken">
 		<div
 			class="p-4 border rounded-xl"
 			v-for="(project, index) in productsList"
